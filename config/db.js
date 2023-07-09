@@ -11,24 +11,13 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-const express = require('express');
-const {
-  getBootcamps,
-  getBootcamp,
-  createBootcamp,
-  updateBootcamp,
-  deleteBootcamp,
-} = require('../controllers/bootcamps');
 
-const router = express.Router();
+const mongoose = require('mongoose');
 
-router.route('/').get(getBootcamps).post(createBootcamp);
+const connectDB = async () => {
+  const conn = await mongoose.connect(process.env.MONGO_URI);
 
-router
-  .route('/:id')
-  .get(getBootcamp)
-  .post(createBootcamp)
-  .put(updateBootcamp)
-  .delete(deleteBootcamp);
+  console.log(`MongoDB Connected: ${conn.connection.host}`.cyan.underline.bold);
+};
 
-module.exports = router;
+module.exports = connectDB;
