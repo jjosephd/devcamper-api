@@ -13,7 +13,7 @@
 // limitations under the License.
 
 /** This file contains each HTTP request method required to CRUD bootcamps **/
-
+const ErrorResponse = require('../utils/errorResponse');
 const Bootcamp = require('../models/Bootcamp');
 
 // @desc Get all bootcamps
@@ -28,9 +28,9 @@ exports.getBootcamps = async (req, res, next) => {
       .status(200)
       .json({ success: true, data: bootcamps, count: bootcamps.length });
   } catch (error) {
-    res.status(400).json({
-      success: false,
-    });
+    next(
+      new ErrorResponse(`Bootcamp not found with id of ${req.params.id}`, 404)
+    );
   }
 };
 
@@ -43,14 +43,18 @@ exports.getBootcamp = async (req, res, next) => {
     const bootcamp = await Bootcamp.findById(req.params.id);
 
     if (!bootcamp) {
-      return res.status(400).json({ success: false });
+      return next(
+        new ErrorResponse(`Bootcamp not found with id of ${req.params.id}`, 404)
+      );
     }
 
     res.status(200).json({ success: true, data: bootcamp });
-  } catch (error) {
-    res.status(400).json({
-      success: false,
-    });
+  } catch (err) {
+    //res.status(400).json({success: false,});
+    //call next and return new ErrorResponse with valid params
+    next(
+      new ErrorResponse(`Bootcamp not found with id of ${req.params.id}`, 404)
+    );
   }
 };
 
