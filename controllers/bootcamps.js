@@ -28,9 +28,7 @@ exports.getBootcamps = async (req, res, next) => {
       .status(200)
       .json({ success: true, data: bootcamps, count: bootcamps.length });
   } catch (error) {
-    next(
-      new ErrorResponse(`Bootcamp not found with id of ${req.params.id}`, 404)
-    );
+    next(err);
   }
 };
 
@@ -42,6 +40,7 @@ exports.getBootcamp = async (req, res, next) => {
   try {
     const bootcamp = await Bootcamp.findById(req.params.id);
 
+    //If :id is formatted correctly but does not exist
     if (!bootcamp) {
       return next(
         new ErrorResponse(`Bootcamp not found with id of ${req.params.id}`, 404)
@@ -50,7 +49,7 @@ exports.getBootcamp = async (req, res, next) => {
 
     res.status(200).json({ success: true, data: bootcamp });
   } catch (err) {
-    //res.status(400).json({success: false,});
+    //incorrectly formatted :id
     //call next and return new ErrorResponse with valid params
     next(
       new ErrorResponse(`Bootcamp not found with id of ${req.params.id}`, 404)

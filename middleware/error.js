@@ -12,6 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+const ErrorResponse = require('../utils/errorResponse');
+
 /***
  *  errHandler creates architecture for error.
  *  includes success boolean and error string
@@ -19,11 +21,22 @@
  */
 
 const errorHandler = (err, req, res, next) => {
+  let error = { ...err };
+
+  error.message = err.message;
   //Dev Console Log
   console.log(err.stack.red);
-  res.status(err.statusCode).json({
+
+  //Mongoose bad Object ID
+
+  if (err.name === 'Error') {
+    const message = `Resource not found with id of ${err.value}`;
+    error = new ErrorResponse(message, 404);
+  }
+  console.log(err.name);
+  res.status(error.statusCode).json({
     success: false,
-    error: err.message || 'Server Error',
+    error: error.message || 'Server Error',
   });
 };
 
